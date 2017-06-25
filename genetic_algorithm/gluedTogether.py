@@ -78,7 +78,7 @@ def simulateAptamerGA(optFileName, pop_size, gens):
 #    avgFitness = average([x[2] for x in final_gen])
     
 
-simulateAptamerGA('test.GA', 100, 50)
+simulateAptamerGA('test.GA', 100, 500)
 
 
 
