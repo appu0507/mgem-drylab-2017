@@ -59,11 +59,12 @@ def simulateAptamerGA(optFileName, pop_size, gens):
             tmp.append([aptamer[0], aptamer[1], aptamer[2]])
         tmp = sorted(tmp, key=lambda x: x[2], reverse=True)
         firstAndlast[gen] = tmp
-    
+#    print 'first ' + str(len(firstAndlast[0]))
+#    print 'last ' + str(len(firstAndlast[1]))
     with open(optFileName, 'w') as opt:
         opt.write('\t\t\t\tFirst Generation\t\t\t\t\t\t\t\t\t\tLast Generation\n')
         opt.write('Aptamer #\tAptamer Sequence\t\tFitness Score\t\tFitness Score\tAptamer Sequence\t\tAptamer #\n')
-        for linum in range(len(firstAndlast[0])):
+        for linum in range(min([len(x) for x in firstAndlast])):
             opt.write(firstAndlast[0][linum][0]+'\t'+firstAndlast[0][linum][1]+'\t'+str(firstAndlast[0][linum][2])+'\t\t\t\t\t'+str(firstAndlast[1][linum][2])+'\t\t\t'+firstAndlast[1][linum][1]+'\t'+firstAndlast[1][linum][0]+'\n')
     opt.close()
 
