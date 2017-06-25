@@ -38,37 +38,46 @@ def runGeneticAlgorithim(populationsize, generations):
     firstGen = ab.genPool(populationsize)
     for gen in range(generations):
         if gen == 0:
-            nextGen = ab.breed(firstGen)
+            lastGen = ab.breed(firstGen, gen)
         else:
-            nextGen = ab.breed(nextGen)
-        for x in range(len(nextGen)):
-            if hp.hairpin(nextGen[x][1]) != 0:
-                nextGen.remove(x)
-        for aptamer in nextGen:
+            lastGen = ab.breed(lastGen, gen)
+        for aptamer in lastGen:
+            if hp.hairpin(aptamer[1]) != 0:
+                lastGen.remove(aptamer)
+        for aptamer in lastGen:
             aptamer[1] = mt.mutate(aptamer[1])
-    return nextGen
+    return [firstGen, lastGen] 
 
 
-# final_gen is a list where each element is in the format [offspring_1, 'asdasdasda', 69]
+#is a list where each element is in the format [offspring_1, 'asdasdasda', 69]
 def simulateAptamerGA(optFileName, pop_size, gens):
-    final_gen = runGeneticAlgorithim(pop_size, gens)
+    firstAndlast = runGeneticAlgorithim(pop_size, gens) 
+    for gen in range(len(firstAndlast)):
+        sorting = firstAndlast[gen]
+        tmp = []
+        for aptamer in sorting:
+            tmp.append([aptamer[0], aptamer[1], aptamer[2]])
+        tmp = sorted(tmp, key=lambda x: x[2], reverse=True)
+        firstAndlast[gen] = tmp
+    
     with open(optFileName, 'w') as opt:
-        opt.write('Aptamer #\tAptamer Sequence\tFitness Score\n')
-        for aptamer in final_gen:
-            opt.write(str(aptamer[0]) + '\t' + str(aptamer[1]) + '\t' + str(aptamer[2]) + '\n')
+        opt.write('\t\t\t\tFirst Generation\t\t\t\t\t\t\t\t\t\tLast Generation\n')
+        opt.write('Aptamer #\tAptamer Sequence\t\tFitness Score\t\tFitness Score\tAptamer Sequence\t\tAptamer #\n')
+        for linum in range(len(firstAndlast[0])):
+            opt.write(firstAndlast[0][linum][0]+'\t'+firstAndlast[0][linum][1]+'\t'+str(firstAndlast[0][linum][2])+'\t\t\t\t\t'+str(firstAndlast[1][linum][2])+'\t\t\t'+firstAndlast[1][linum][1]+'\t'+firstAndlast[1][linum][0]+'\n')
     opt.close()
+
+#    with open(optFileName, 'w') as opt:
+#        opt.write('Aptamer #\tAptamer Sequence\tFitness Score\n')
+#        for aptamer in lines:
+#            opt.write(str(aptamer[0]) + '\t' + str(aptamer[1]) + '\t' + str(aptamer[2]) + '\n')
 # potentialy useful statistics, but not sure where to output them, can add more if desired
 #    totalApts = len(final_gen)
 #    avgLength = average([len(x[0] for x in final_gen])
 #    avgFitness = average([x[2] for x in final_gen])
     
 
-simulateAptamerGA('test.GA', 20, 10)
-
-
-
-
-
+simulateAptamerGA('test.GA', 100, 50)
 
 
 

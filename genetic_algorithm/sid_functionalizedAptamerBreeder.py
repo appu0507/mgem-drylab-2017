@@ -26,7 +26,7 @@ def generateAptamer(length=20): # function to generate a random aptamer length n
 def genPool(pool_size, apt_size=20):
     aptamerList = []
     for i in range(1,pool_size):
-        aptamerList.append(['aptamer_' + str(i), generateAptamer(apt_size), randint(0,101)])
+        aptamerList.append(['aptamer_' + str(i), generateAptamer(apt_size), randint(1,50)])
     return sorted(aptamerList, key=lambda x: x[2], reverse=True) 
 
 
@@ -44,24 +44,26 @@ def computeChildFitness(parent1=None, parent2=None, child=None):
         return parent1[2]
     elif parent1 != None and parent2 != None and child != None:
         #TODO compute child fintess
+        # fitness function can be based on parents, needs to be only based on the sequence
         # THIS IS A MADE UP PLACE HOLDER IT IS NOT INTENDED FOR FINAL USE
-        return mean([parent1[2], parent2[2]])*(SequenceMatcher(None, parent1[1], child).ratio() + SequenceMatcher(None, parent2[1], child).ratio())
+        # ALSO ITS REALLY BAD, FITNESS VALUES JUST BLOW UP 
+        return mean([parent1[2], parent2[2]])*mean([SequenceMatcher(None, parent1[1], child).ratio(), SequenceMatcher(None, parent2[1], child).ratio()])
     else:
         raise ValueError('Invalid paramaters, need parent1, parent2 and child to all not be None')
 
 
 
 # parent1 and parent 2 are in the format [aptamer_1, 'asdasdasdasdasda', 47]
-def crossover(parent1, parent2, idnum):
+def crossover(parent1, parent2, idnum, gennum):
     max_pos = min([len(parent1), len(parent2)])   
     crossOverPos = randint(1,max_pos-2) # random nucleotide postion along the max_pos bp aptamer, except not the 
     if crossOverPos%2 == 0:
         # if crossOverpos is even, first half of the child is from parent1, if not first half of child is from parent2
         childseq = parent1[1][:crossOverPos] + parent2[1][crossOverPos:]
-        child = ["offspring_" + str(idnum), childseq, computeChildFitness(parent1, parent2, childseq)]
+        child = ["gen_" + str(gennum) + "_offspring_" + str(idnum), childseq, computeChildFitness(parent1, parent2, childseq)]
     else:
         childseq = parent2[1][:crossOverPos] + parent1[1][crossOverPos:]
-        child = ["offspring_" + str(idnum), childseq, computeChildFitness(parent1, parent2, childseq)]
+        child = ["gen_" + str(gennum) + "_offspring_" + str(idnum), childseq, computeChildFitness(parent1, parent2, childseq)]
     return child
 #   if crossOverPos == 0:
 #      # just returns parent 1 since not acutally a crossover
@@ -73,9 +75,9 @@ def crossover(parent1, parent2, idnum):
 
 
 #aptamer list format: [['aptamer_1, 'asdasdasdasd', 45], ['aptamer_2', 'asdasasdasd', 78]]
-# the two highest scoring aptamers are randomly crossed over to generate a specified number of offspring
+#the two highest scoring aptamers are randomly crossed over to generate a specified number of offspring
 #assumed all aptamers are the same length
-def breed(sortedAptamerList, top_cutoff=0.10):
+def breed(sortedAptamerList, gennum, top_cutoff=0.10):
     # sortedAptamerList should already be sorted but just because im paranoid im going to sort it again
     sortedAptamerList = sorted(sortedAptamerList, key=lambda x: x[2], reverse=True) 
     # list initialization
@@ -86,6 +88,6 @@ def breed(sortedAptamerList, top_cutoff=0.10):
     # creates a list of the top 10% of of the sortedAptamerList based on fitness score
     top_parents = sortedAptamerList[:int(len(sortedAptamerList)*0.10)]
     # crossover parents randomly untill you get to population size
-    for child in range(len(sortedAptamerList)):
-        bred_aptamers.append(crossover(choice(top_parents), choice(top_parents), child))
+    for child in range(len(sortedAptamerList) - int(len(sortedAptamerList)*0.02)):
+        bred_aptamers.append(crossover(choice(top_parents), choice(top_parents), child, gennum))
     return bred_aptamers
