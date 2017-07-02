@@ -1,14 +1,27 @@
 import cv2
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageEnhance
 import numpy as np
 
+#import image
 im_original = Image.open("May26 1.tif")
 im_background = Image.open("May26 3.tif")
 
+#subtract the background from the original
 im_diff = ImageChops.subtract(im_original, im_background)
+
+#enhances contrast of image
+enhancer = ImageEnhance.Contrast(im_diff)
+im_diff = enhancer.enhance(2.0)
+
+#enhance brightness of image
+enhancer = ImageEnhance.Brightness(im_diff)
+im_diff = enhancer.enhance(2.0)
+
+#save new image
 im_diff.save ("difference.jpg")
 
 
+#BROKEN OLD CODE
 # #import image to numpy array
 # im_original = cv2.imread("May26 3.tif")
 # im_background = cv2.imread("May26 1.tif")
