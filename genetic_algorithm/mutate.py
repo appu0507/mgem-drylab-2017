@@ -1,5 +1,6 @@
 import os
 import random
+import sid_functionalizedAptamerBreeder as ab
 # Formerly named replace.py
 '''
 This program takes in a aptamer and outputs an a apter with a randomly replaced site
@@ -9,8 +10,10 @@ Output: new substituted aptamer
 
 #function to replace a random site
 
-#returns sequence with random site substituted (string) 
-def mutate(input_sequence, mutation_probability = 0.02):
+#returns sequence with random site substituted 
+# input is in the format of ['offspring', 'asdsadsas' 56]
+def mutate(aptamer, mutation_probability = 0.02):
+    input_sequence = aptamer[1]
     if random.random() <= mutation_probability:
         site = random.randint(0, len(input_sequence)-1)
         s = list(input_sequence)
@@ -28,9 +31,9 @@ def mutate(input_sequence, mutation_probability = 0.02):
             s[site] = random.choice(noT)
         else:
             raise ValueError('Not a valid base')
-        return "".join(s) 
+        return [aptamer[0], "".join(s), ab.getFitness("".join(s))] 
     else:
-        return input_sequence
+        return aptamer
 #
 #      choose = random.randint(1,3)
 #      if s[site]== 'A': 
