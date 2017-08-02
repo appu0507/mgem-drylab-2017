@@ -22,6 +22,7 @@ def generateAptamer(length=20): # function to generate a random aptamer length n
 #         aptamer += "T"
 
 def getFitness(sequence):
+    # this is a placehodler function, it is going to be replaced by our trained ML model
     return (sequence.count('A')/len(sequence))*100
 
 # generates a random pool of aptamers using the generateAptamer function

@@ -1,7 +1,7 @@
 import sid_functionalizedAptamerBreeder as ab
 import hairpins as hp
 import mutate as mt
-
+import sys
 #Function List:
 # mt.mutate(sequence)
 # hp.hairpin(sequence, max_hp_len)
@@ -38,14 +38,16 @@ def runGeneticAlgorithim(populationsize, generations):
     firstGen = ab.genPool(populationsize)
     for gen in range(generations):
         if gen == 0:
-            lastGen = ab.breed(firstGen, gen)
+            lastGen = ab.breed(firstGen, gen, float(sys.argv[4]))
+            for x in range(len(lastGen)):
+                lastGen[x] = mt.mutate(lastGen[x])
         else:
-            lastGen = ab.breed(lastGen, gen)
+            for x in range(len(lastGen)):
+                lastGen[x] = mt.mutate(lastGen[x])
+            lastGen = ab.breed(lastGen, gen, float(sys.argv[4]))
         for aptamer in lastGen:
             if hp.hairpin(aptamer[1]) != 0:
                 lastGen.remove(aptamer)
-        for aptamer in lastGen:
-            aptamer[1] = mt.mutate(aptamer[1])
     return [firstGen, lastGen] 
 
 
@@ -63,9 +65,9 @@ def simulateAptamerGA(optFileName, pop_size, gens):
 #    print 'last ' + str(len(firstAndlast[1]))
     with open(optFileName, 'w') as opt:
         opt.write('\t\t\t\tFirst Generation\t\t\t\t\t\t\t\t\t\tLast Generation\n')
-        opt.write('Aptamer #\tAptamer Sequence\t\tFitness Score\t\tFitness Score\tAptamer Sequence\t\tAptamer #\n')
+        opt.write('Aptamer #\tAptamer Sequence\t\tFitness Score\tFitness Score\tAptamer Sequence\t\tAptamer #\n')
         for linum in range(min([len(x) for x in firstAndlast])):
-            opt.write(firstAndlast[0][linum][0]+'\t'+firstAndlast[0][linum][1]+'\t'+str(firstAndlast[0][linum][2])+'\t\t\t\t\t'+str(firstAndlast[1][linum][2])+'\t\t\t'+firstAndlast[1][linum][1]+'\t'+firstAndlast[1][linum][0]+'\n')
+            opt.write(firstAndlast[0][linum][0]+'\t'+firstAndlast[0][linum][1]+'\t'+str(firstAndlast[0][linum][2])+'\t\t\t'+str(firstAndlast[1][linum][2])+'\t\t\t'+firstAndlast[1][linum][1]+'\t'+firstAndlast[1][linum][0]+'\n')
     opt.close()
 
 #    with open(optFileName, 'w') as opt:
@@ -77,8 +79,8 @@ def simulateAptamerGA(optFileName, pop_size, gens):
 #    avgLength = average([len(x[0] for x in final_gen])
 #    avgFitness = average([x[2] for x in final_gen])
     
-
-simulateAptamerGA('test.GA', 100, 500)
+#sys.argv[1,2,3,4] is ['outputfilename', population size, number of generations, % cutoff for top scoring members in ab.breed function (default is 10%)]
+simulateAptamerGA(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]))
 
 
 
