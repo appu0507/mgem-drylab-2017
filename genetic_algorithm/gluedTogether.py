@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import sid_functionalizedAptamerBreeder as ab
 import hairpins as hp
 import mutate as mt
@@ -35,7 +36,7 @@ repeat [...] for x generations
 '''
 # generation member: ['seq_1', 'asdasdasdasd', 45]
 def runGeneticAlgorithim(populationsize, generations):
-    firstGen = ab.genPool(populationsize)
+    firstGen = ab.genPool(populationsize, int(sys.argv[5]))
     for gen in range(generations):
         if gen == 0:
             lastGen = ab.breed(firstGen, gen, float(sys.argv[4]))
@@ -79,8 +80,5 @@ def simulateAptamerGA(optFileName, pop_size, gens):
 #    avgLength = average([len(x[0] for x in final_gen])
 #    avgFitness = average([x[2] for x in final_gen])
     
-#sys.argv[1,2,3,4] is ['outputfilename', population size, number of generations, % cutoff for top scoring members in ab.breed function (default is 10%)]
+#sys.argv[1,2,3,4,5] is ['outputfilename', population size, number of generations, % cutoff for top scoring members in ab.breed, size of each generated aptamer]
 simulateAptamerGA(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]))
-
-
-
