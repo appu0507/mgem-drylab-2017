@@ -1,0 +1,3 @@
+1. Figure out how to normalize fitness scores from actual read data
+2. Format read data appropriately (tab-delimited files with sequences and fitness scores in each colum
+
