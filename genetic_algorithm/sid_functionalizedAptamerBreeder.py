@@ -4,13 +4,27 @@ from numpy import mean
 from difflib import SequenceMatcher
 #made by sid for gluedtogether.py
 
+#aptamers are already sorted by size, which will be used as a proxy for fitness
+def getAptamers():
+    with open("ALS_round_9_dereplicated.fasta","r") as input_sequences:
+    sequences = input_sequences.readlines()
+    aptamers = []
+    for i in range(0,len(sequences)):
+        try:
+            if '>' in sequences[i]:
+                size = (sequences[i].split('=')[1]).strip('\n;')
+                aptamers.append([sequences[i].strip('\n;'),sequences[i+1].strip('\n;'),int(size)])
+        except IndexError:
+            continue
+    return aptamers
+
 #generates a random aptamer for testing purposes 
-def generateAptamer(length=20): # function to generate a random aptamer length nucleotides long
-    aptamer = ""
-    bases = ['A', 'G', 'C', 'T']
-    for i in range(0,length):
-        aptamer += choice(bases)
-    return aptamer
+# def generateAptamer(length=20): # function to generate a random aptamer length nucleotides long
+#     aptamer = ""
+#     bases = ['A', 'G', 'C', 'T']
+#     for i in range(0,length):
+#         aptamer += choice(bases)
+#     return aptamer
 #      n = randint(0,3)
 #      if n == 0:
 #         aptamer += "A"
@@ -21,17 +35,17 @@ def generateAptamer(length=20): # function to generate a random aptamer length n
 #      else:
 #         aptamer += "T"
 
-def getFitness(sequence):
-    # this is a placehodler function, it is going to be replaced by our trained ML model
-    return (sequence.count('A')/len(sequence))*100
+# def getFitness(sequence):
+#     # this is a placehodler function, it is going to be replaced by our trained ML model
+#     return (sequence.count('A')/len(sequence))*100
 
 # generates a random pool of aptamers using the generateAptamer function
-def genPool(pool_size, apt_size=20):
-    aptamerList = []
-    for i in range(1,pool_size):
-        seq = generateAptamer(apt_size)
-        aptamerList.append(['aptamer_' + str(i), seq, getFitness(seq)])
-    return sorted(aptamerList, key=lambda x: x[2], reverse=True) 
+# def genPool(pool_size, apt_size=20):
+#     aptamerList = []
+#     for i in range(1,pool_size):
+#         seq = generateAptamer(apt_size)
+#         aptamerList.append(['aptamer_' + str(i), seq, getFitness(seq)])
+#     return sorted(aptamerList, key=lambda x: x[2], reverse=True) 
 
 
 
@@ -81,9 +95,9 @@ def crossover(parent1, parent2, idnum, gennum):
 #aptamer list format: [['aptamer_1, 'asdasdasdasd', 45], ['aptamer_2', 'asdasasdasd', 78]]
 #the two highest scoring aptamers are randomly crossed over to generate a specified number of offspring
 #assumed all aptamers are the same length
-def breed(sortedAptamerList, gennum, top_cutoff=0.10):
+def breed(aptamers, gennum, top_cutoff=0.10):
     # sortedAptamerList should already be sorted but just because im paranoid im going to sort it again
-    sortedAptamerList = sorted(sortedAptamerList, key=lambda x: x[2], reverse=True) 
+    sortedAptamers = sorted(aptamers, key=lambda x: x[2], reverse=True) 
     # list initialization
     bred_aptamers = []
     #elites is top 2%
