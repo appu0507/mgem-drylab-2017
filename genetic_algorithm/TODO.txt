@@ -1,8 +1,13 @@
--Figure out which NN model to build
--Build ML model to predict fitness score from sequence
+-interpret tpot output when finished
+
 -Figure out how to normalize fitness scores from actual read data
--Format read data appropriately (tab-delimited files with sequences and fitness scores in each colum)
+
+-Build ML model to predict fitness score from sequence
+
 -Train model on aptamer read data
+
 -test ML model (train on half round 9 ALS data, verify with other half of round 9 data)
+
 -compare output of training on round 10 data to round 11 data, and see if it produces similar increases in fitness after 1 generation (in silico vs. in vitro comparison)
+
 -Integrated ML model as fitness function for GA
