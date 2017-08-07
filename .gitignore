@@ -1,2 +1,4 @@
 # ignore all compiled python files
 *.pyc
+#ignore all test output files 
+*.test
