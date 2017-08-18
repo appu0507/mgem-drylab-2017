@@ -40,7 +40,7 @@ def pad_sequences(sequences):
   sequences = None
   print('Threw out raw sequences')
 
-  X = np.memmap('X.txt'padded_sequences)
+  X = np.array(padded_sequences)
 
   return X
 
