@@ -38,9 +38,8 @@ def pad_sequences(sequences):
     padded_sequences.append(list(padded_sequence_list_ints))
 
   sequences = None
-  print('Threw out raw sequences')
-
   X = np.array(padded_sequences)
+  padded_sequences = None
 
   return X
 
@@ -54,6 +53,8 @@ def training_output(sizes):
     else:
       y.append(y[-1])
 
+  sizes = None
+
   y = np.vstack(np.array(y))
 
   return y
@@ -64,10 +65,13 @@ def nonlin(x,deriv=False):
   return 1/(1+np.exp(-x))
 
 
-sequences, sizes = import_data('ALS_round_12_dereplicated_Binary.csv')
+sequences, sizes = import_data('Legionella_round_11_dereplicated_int.csv')
 
 X = pad_sequences(sequences)
 y = training_output(sizes)
+
+sequences = None
+sizes = None
 
 #X = np.array([[0,0,1],
 #              [0,1,1],
@@ -87,6 +91,10 @@ syn1 = 2*np.random.random((len(y),1)) - 1
 for j in range(60000):
   print(j)
   l0 = X
+  print(l0.shape)
+  print(syn0.shape)
+
+  # Need 80GB memory here
   l1 = nonlin(np.dot(l0,syn0))
   l2 = nonlin(np.dot(l1,syn1))
 
