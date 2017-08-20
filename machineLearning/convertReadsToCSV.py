@@ -14,7 +14,7 @@ fasta_file = pysam.FastaFile(sys.argv[1])
 
 with open(sys.argv[2], 'wb') as csvf:
     fasta_writer = csv.writer(csvf, delimiter=',')
-#    fasta_writer.writerow(['Number Of Reads', 'Sequence'])
+    fasta_writer.writerow(['reads', 'sequence'])
     for ref in fasta_file.references:
         fasta_writer.writerow([(str(ref).split('=')[1]).strip('\n;'), fasta_file.fetch(ref)])
 
