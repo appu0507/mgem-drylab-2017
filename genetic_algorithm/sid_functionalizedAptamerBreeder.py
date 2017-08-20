@@ -10,6 +10,7 @@ def getAptamers(readfile):
         aptamers = []
         for i in range(0,len(sequences)):
             try:
+# FIGURE OUT HOW TO NORMALIZE THESE FITNESS SCORES, BEFORE CREATING POPULATION MEMBERS
                 if '>' in sequences[i]:
                     size = (sequences[i].split('=')[1]).strip('\n;')
                     aptamers.append([sequences[i].strip('\n;'),sequences[i+1].strip('\n;'),int(size)])
@@ -17,6 +18,7 @@ def getAptamers(readfile):
                 continue
     return aptamers
 
+#DEPRECIATED
 #generates a random aptamer for testing purposes 
 def generateAptamer(length=20): # function to generate a random aptamer length nucleotides long
      aptamer = ""
@@ -36,8 +38,10 @@ def generateAptamer(length=20): # function to generate a random aptamer length n
 
 def getFitness(sequence):
      # this is a placehodler function, it is going to be replaced by our trained ML model
+     # IF THIS IS NORMALIZED, THEN MUST NORMALIZE SCORES IN FIRST GEN FOR THE getAptamers() function
      return (sequence.count('A')/len(sequence))*100
 
+#DEPRECIATED
 # generates a random pool of aptamers using the generateAptamer function
 def genPool(pool_size, apt_size=20):
      aptamerList = []
