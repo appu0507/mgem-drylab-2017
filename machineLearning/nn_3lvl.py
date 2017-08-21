@@ -21,7 +21,6 @@ def import_data(fname):
   return sequences,sizes
 
 def pad_sequences(sequences):
-  print('Starting to pad!')
   max_length = 0
   for seq in sequences:
     if len(seq) > max_length:
@@ -65,10 +64,12 @@ def nonlin(x,deriv=False):
   return 1/(1+np.exp(-x))
 
 
-sequences, sizes = import_data('Legionella_round_11_dereplicated_int.csv')
+sequences, sizes = import_data('Legionella_short.csv')
 
 X = pad_sequences(sequences)
 y = training_output(sizes)
+
+print(y)
 
 sequences = None
 sizes = None
@@ -85,16 +86,17 @@ sizes = None
 
 np.random.seed(1)
 
-syn0 = 2*np.random.random((len(X[0]),len(X))) - 1
-syn1 = 2*np.random.random((len(y),1)) - 1
+
+syn_per_neuron = len(X[0])
+n_neurons = 50
+
+
+syn0 = 2*np.random.random((syn_per_neuron,n_neurons)) - 1
+syn1 = 2*np.random.random((n_neurons,1)) - 1
 
 for j in range(60000):
-  print(j)
   l0 = X
-  print(l0.shape)
-  print(syn0.shape)
 
-  # Need 80GB memory here
   l1 = nonlin(np.dot(l0,syn0))
   l2 = nonlin(np.dot(l1,syn1))
 
