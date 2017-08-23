@@ -64,7 +64,7 @@ def nonlin(x,deriv=False):
   return 1/(1+np.exp(-x))
 
 
-sequences, sizes = import_data('Legionella_short.csv')
+sequences, sizes = import_data('../testData/Legionella_short.csv')
 
 X = pad_sequences(sequences)
 y = training_output(sizes)
