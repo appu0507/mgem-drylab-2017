@@ -36,8 +36,7 @@ for i,seq in enumerate(seqs):
 
 #creating model
 model = Sequential()
-model.add(Embedding(len(seqs), max_length, input_length=max_length))
-model.add(GRU(30, input_shape=(max_length,1), return_sequences=True))  
+model.add(GRU(output_dim=30, input_length=len(seqstrain), input_dim=(len(seqstrain), 1, max_length), return_sequences=True))  
 model.add(GRU(50, input_shape=(30,1), return_sequences=True))  
 model.add(Dropout(0.2))
 model.add(GRU(20, input_shape=(50,1), return_sequences=False))  
