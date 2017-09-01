@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Embedding
-from keras.layers.recurrent import GRU
+from keras.layers.recurrent import LSTM
 import matplotlib.pylab as plt
 # fix random seed for reproducibility
 seed = 9
@@ -36,22 +36,23 @@ for i,seq in enumerate(seqs):
 
 #creating model
 model = Sequential()
-model.add(GRU(output_dim=30, input_length=len(seqstrain), input_dim=(len(seqstrain), 1, max_length), return_sequences=True))  
-model.add(GRU(50, input_shape=(30,1), return_sequences=True))  
+model.add(LSTM(30, input_shape=(1, max_length), return_sequences=True))  
+model.add(LSTM(50, input_shape=(30,1), return_sequences=True))  
 model.add(Dropout(0.2))
-model.add(GRU(20, input_shape=(50,1), return_sequences=False))  
+model.add(LSTM(20, input_shape=(50,1), return_sequences=False))  
 model.add(Dropout(0.2))
 model.add(Dense(output_dim=1, input_shape=(20,1))) 
 model.add(Activation("relu"))  
 model.compile(loss="mean_squared_error", optimizer="rmsprop")
 # fit the model
-model.fit(seqstrain, readstrain, batch_size=30, nb_epoch=10, validation_split=0.05)
+model.fit(seqstrain, readstrain, batch_size=30, epochs=int(sys.argv[2]), validation_split=0.05)
 #prediction 
 predicted = model.predict(seqstest)
 #error
-rmse = np.sqrt(((predicted-readstest)**2).mean(axis=0))
-print('rmse error is' + str(rmse))
-#plotting 
-plt.plot(predicted[:,0],'--')
-plt.plot(readstest[:,0],'--')
+rmse = [np.sqrt(x) for x in ((predicted[:]-readstest[:])**2).mean(axis=0)]
+print('rmse error is:')
+print(rmse)
+#plotting
+plt.plot(predicted,'--')
+plt.plot(readstest,'--')
 plt.legend(["prediction", "Test"])
