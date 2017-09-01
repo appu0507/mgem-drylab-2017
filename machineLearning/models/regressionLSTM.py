@@ -15,6 +15,7 @@ dataset = dataframe.values
 # split into input (X) and output (Y) variables
 seqs = dataset[:,0]
 reads = dataset[:,1]
+seqs = [str(int(seq)) for seq in seqs]
 #pad seqs to be same len
 max_length = 0
 for seq in seqs:
@@ -28,7 +29,7 @@ for i,seq in enumerate(seqs):
     padded_sequence = seq + diff*'0'
     padded_sequence_list = list(padded_sequence)
     padded_sequence_list_ints = [ int(x) for x in padded_sequence_list ]
-    seqs[i] = padded_sequence_list_ints
+    seqs[i] = [padded_sequence_list_ints]
 
 #split into test and trian data
 (seqstrain, seqstest, readstrain, readstest) = train_test_split(seqs, reads, test_size=0.33, random_state=seed)
