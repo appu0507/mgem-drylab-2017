@@ -1,11 +1,11 @@
 import sys
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Embedding
 from keras.layers.recurrent import LSTM
 import matplotlib.pylab as plt
+from sklearn.model_selection import train_test_split
 # fix random seed for reproducibility
 seed = 9
 np.random.seed(seed)
