@@ -1,16 +1,19 @@
 from __future__ import division
 from random import randint, choice
 from numpy import mean
-from difflib import SequenceMatcher
+import numpy as np
+import pandas as pd
+from keras.models import Sequential
+from keras.layers import Dense, Activation, Dropout, Embedding
+from keras.layers.recurrent import LSTM
+from sklearn.model_selection import train_test_split
 #made by sid for gluedtogether.py
-
 def getAptamers(readfile):
     with open(readfile,"r") as input_sequences:
         sequences = input_sequences.readlines()
         aptamers = []
         for i in range(0,len(sequences)):
             try:
-# FIGURE OUT HOW TO NORMALIZE THESE FITNESS SCORES, BEFORE CREATING POPULATION MEMBERS
                 if '>' in sequences[i]:
                     size = (sequences[i].split('=')[1]).strip('\n;')
                     aptamers.append([sequences[i].strip('\n;'),sequences[i+1].strip('\n;'),int(size)])
@@ -36,18 +39,16 @@ def generateAptamer(length=20): # function to generate a random aptamer length n
 #      else:
 #         aptamer += "T"
 
-def getFitness(sequence):
-     # this is a placehodler function, it is going to be replaced by our trained ML model
-     # IF THIS IS NORMALIZED, THEN MUST NORMALIZE SCORES IN FIRST GEN FOR THE getAptamers() function
-     return (sequence.count('A')/len(sequence))*100
-
+def getFitness(mdl, sequence):
+    score = mdl.predict(sequence)
+    return score
 #DEPRECIATED
 # generates a random pool of aptamers using the generateAptamer function
-def genPool(pool_size, apt_size=20):
+def genPool(pool_size, apt_size=20, mdl):
      aptamerList = []
      for i in range(1,pool_size):
          seq = generateAptamer(apt_size)
-         aptamerList.append(['aptamer_' + str(i), seq, getFitness(seq)])
+         aptamerList.append(['aptamer_' + str(i), seq, getFitness(mdl,seq)])
      return sorted(aptamerList, key=lambda x: x[2], reverse=True) 
 
 
@@ -75,16 +76,16 @@ def genPool(pool_size, apt_size=20):
 
 
 # parent1 and parent 2 are in the format [aptamer_1, 'asdasdasdasdasda', 47]
-def crossover(parent1, parent2, idnum, gennum):
+def crossover(parent1, parent2, idnum, gennum, mdl):
     max_pos = min([len(parent1), len(parent2)])   
     crossOverPos = randint(1,max_pos-2) # random nucleotide postion along the max_pos bp aptamer, except not the 
     if crossOverPos%2 == 0:
         # if crossOverpos is even, first half of the child is from parent1, if not first half of child is from parent2
         childseq = parent1[1][:crossOverPos] + parent2[1][crossOverPos:]
-        child = ["gen_" + str(gennum) + "_offspring_" + str(idnum), childseq, getFitness(childseq)]
+        child = ["gen_" + str(gennum) + "_offspring_" + str(idnum), childseq, getFitness(mdl, childseq)]
     else:
         childseq = parent2[1][:crossOverPos] + parent1[1][crossOverPos:]
-        child = ["gen_" + str(gennum) + "_offspring_" + str(idnum), childseq, getFitness(childseq)]
+        child = ["gen_" + str(gennum) + "_offspring_" + str(idnum), childseq, getFitness(mdl, childseq)]
     return child
 #   if crossOverPos == 0:
 #      # just returns parent 1 since not acutally a crossover
@@ -98,7 +99,7 @@ def crossover(parent1, parent2, idnum, gennum):
 #aptamer list format: [['aptamer_1, 'asdasdasdasd', 45], ['aptamer_2', 'asdasasdasd', 78]]
 #the two highest scoring aptamers are randomly crossed over to generate a specified number of offspring
 #assumed all aptamers are the same length
-def breed(aptamers, gennum, top_cutoff=0.10):
+def breed(aptamers, gennum, top_cutoff=0.10, mdl):
     # sortedAptamerList should already be sorted but just because im paranoid im going to sort it again
     sortedAptamerList = sorted(aptamers, key=lambda x: x[2], reverse=True) 
     # list initialization
@@ -110,5 +111,5 @@ def breed(aptamers, gennum, top_cutoff=0.10):
     top_parents = sortedAptamerList[:int(len(sortedAptamerList)*0.10)]
     # crossover parents randomly untill you get to population size
     for child in range(len(sortedAptamerList) - int(len(sortedAptamerList)*0.02)):
-        bred_aptamers.append(crossover(choice(top_parents), choice(top_parents), child, gennum))
+        bred_aptamers.append(crossover(choice(top_parents), choice(top_parents), child, gennum, mdl))
     return bred_aptamers

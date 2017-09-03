@@ -3,19 +3,27 @@ import sid_functionalizedAptamerBreeder as ab
 import hairpins as hp
 import mutate as mt
 import sys
-
+from keras.models import load_model
+if len(sys.argv) < 6:
+    print("how to use:")
+    print("arg1 is the output file name")
+    print("arg2 is the file with he first generation of aptamers")
+    print("arg3 is the number of generations it runs for")
+    print("arg4 is the cutoff % for top organisms for crossover")
+    print("arg5 is the path to the ml model used to eval fitness scores")
 # generation member: ['seq_1', 'asdasdasdasd', 45]
 def runGeneticAlgorithim(aptamerData, generations):
     firstGen = ab.getAptamers(aptamerData)
+    model = load_model(str(sys.argv[5]))
     for gen in range(generations):
         if gen == 0:
-            lastGen = ab.breed(firstGen, gen, float(sys.argv[4]))
+            lastGen = ab.breed(firstGen, gen, float(sys.argv[4]), model)
             for x in range(len(lastGen)):
                 lastGen[x] = mt.mutate(lastGen[x])
         else:
             for x in range(len(lastGen)):
                 lastGen[x] = mt.mutate(lastGen[x])
-            lastGen = ab.breed(lastGen, gen, float(sys.argv[4]))
+            lastGen = ab.breed(lastGen, gen, float(sys.argv[4]), model)
         for aptamer in lastGen:
             if hp.hairpin(aptamer[1]) != 0:
                 lastGen.remove(aptamer)
