@@ -4,8 +4,8 @@ import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Embedding
 from keras.layers.recurrent import LSTM
-import matplotlib.pylab as plt
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 # fix random seed for reproducibility
 seed = 9
 np.random.seed(seed)
@@ -56,3 +56,5 @@ print(rmse)
 plt.plot(predicted,'--')
 plt.plot(readstest,'--')
 plt.legend(["prediction", "Test"])
+plt.show()
+plt.savefig("/mnt/c/Users/Siddharth Reed 2/Desktop/mGEM/mgem-drylab-2017/machineLearning/trainingResults.plt)
