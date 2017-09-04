@@ -6,6 +6,15 @@ from keras.layers import Dense, Activation, Dropout, Embedding
 from keras.layers.recurrent import LSTM
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
+#checks cli args
+if len(sys.argv) < 6:
+    print("how to run this program")
+    print("arg1 is the input data file for training")
+    print("arg2 is batch size")
+    print("arg3 is number of epochs")
+    print("arg4 is the filepath where the model willbe saved to (*.h5)")
+    print("arg5 is the filepath to the plot of the prediction results (*.png)")
+    
 # fix random seed for reproducibility
 seed = 9
 np.random.seed(seed)
@@ -45,9 +54,10 @@ model.add(Dense(output_dim=1, input_shape=(20,1)))
 model.add(Activation("relu"))  
 model.compile(loss="mean_squared_error", optimizer="rmsprop")
 # fit the model
-model.fit(seqstrain, readstrain, batch_size=30, epochs=int(sys.argv[2]), validation_split=0.05)
+model.fit(seqstrain, readstrain, batch_size=int(sys.argv[2]), epochs=int(sys.argv[3]), validation_split=0.05)
 #prediction 
 predicted = model.predict(seqstest)
+model.save(str(sys.argv[4]))
 #error
 rmse = [np.sqrt(x) for x in ((predicted[:]-readstest[:])**2).mean(axis=0)]
 print('rmse error is:')
@@ -57,4 +67,4 @@ plt.plot(predicted,'--')
 plt.plot(readstest,'--')
 plt.legend(["prediction", "Test"])
 plt.show()
-plt.savefig("/mnt/c/Users/Siddharth Reed 2/Desktop/mGEM/mgem-drylab-2017/machineLearning/trainingResults.plt)
+plt.savefig(str(sys.argv[5]))
