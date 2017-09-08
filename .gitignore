@@ -5,3 +5,5 @@
 #ignore data files 
 *.csv
 *.fasta
+# ignore all swap files
+*.swp
