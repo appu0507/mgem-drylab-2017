@@ -12,7 +12,7 @@ Output: new substituted aptamer
 
 #returns sequence with random site substituted 
 # input is in the format of ['offspring', 'asdsadsas' 56]
-def mutate(aptamer, mutation_probability = 0.02):
+def mutate(aptamer, mdl, mutation_probability = 0.02):
     input_sequence = aptamer[1]
     if random.random() <= mutation_probability:
         site = random.randint(0, len(input_sequence)-1)
@@ -31,7 +31,7 @@ def mutate(aptamer, mutation_probability = 0.02):
             s[site] = random.choice(noT)
         else:
             raise ValueError('Not a valid base')
-        return [aptamer[0], "".join(s), ab.getFitness("".join(s))] 
+        return [aptamer[0], "".join(s), ab.getFitness("".join(s), mdl)] 
     else:
         return aptamer
 #
