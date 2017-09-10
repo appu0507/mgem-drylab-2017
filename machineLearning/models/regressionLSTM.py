@@ -32,13 +32,15 @@ for seq in seqs:
         max_length = len(seq)
 
 #max_length = max_length + (3-(max_length%3))
-#
+
 for i,seq in enumerate(seqs):
     diff = max_length - len(seq)
     padded_sequence = seq + diff*'0'
     padded_sequence_list = list(padded_sequence)
     padded_sequence_list_ints = [ int(x) for x in padded_sequence_list ]
     seqs[i] = [padded_sequence_list_ints]
+
+
 
 #split into test and trian data
 (seqstrain, seqstest, readstrain, readstest) = train_test_split(seqs, reads, test_size=0.33, random_state=seed)
@@ -53,15 +55,20 @@ model.add(Dropout(0.2))
 model.add(Dense(output_dim=1, input_shape=(20,1))) 
 model.add(Activation("relu"))  
 model.compile(loss="mean_squared_error", optimizer="rmsprop")
+
 # fit the model
 model.fit(seqstrain, readstrain, batch_size=int(sys.argv[2]), epochs=int(sys.argv[3]), validation_split=0.05)
+
 #prediction 
 predicted = model.predict(seqstest)
 model.save(str(sys.argv[4]))
-#error
-rmse = [np.sqrt(x) for x in ((predicted[:]-readstest[:])**2).mean(axis=0)]
-print('rmse error is:')
-print(rmse)
+
+##error
+#rmse = [np.sqrt(x) for x in ((predicted[:]-readstest[:])**2).mean(axis=0)]
+#print('rmse error is:')
+#print(rmse)
+
+
 #plotting
 plt.plot(predicted,'--')
 plt.plot(readstest,'--')
