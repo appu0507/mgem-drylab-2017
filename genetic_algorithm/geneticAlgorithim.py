@@ -4,6 +4,7 @@ import hairpins as hp
 import mutate as mt
 import sys
 from keras.models import load_model
+
 if len(sys.argv) < 6:
     print("how to use:")
     print("arg1 is the output file name")
@@ -11,22 +12,25 @@ if len(sys.argv) < 6:
     print("arg3 is the number of generations it runs for")
     print("arg4 is the cutoff % for top organisms for crossover")
     print("arg5 is the path to the ml model used to eval fitness scores")
+
+
 # generation member: ['seq_1', 'asdasdasdasd', 45]
 def runGeneticAlgorithim(aptamerData, generations):
     firstGen = ab.getAptamers(aptamerData)
-    model = load_model(str(sys.argv[5]))
+    model = load_model(str(sys.argv[5])) #saved trained keras model
     for gen in range(generations):
         if gen == 0:
-            lastGen = ab.breed(firstGen, gen, float(sys.argv[4]), model)
+            lastGen = ab.breed(firstGen, gen, model, float(sys.argv[4]))
             for x in range(len(lastGen)):
-                lastGen[x] = mt.mutate(lastGen[x])
+                lastGen[x] = mt.mutate(lastGen[x], model)
         else:
             for x in range(len(lastGen)):
-                lastGen[x] = mt.mutate(lastGen[x])
-            lastGen = ab.breed(lastGen, gen, float(sys.argv[4]), model)
+                lastGen[x] = mt.mutate(lastGen[x], model)
+            lastGen = ab.breed(lastGen, gen, model, float(sys.argv[4]))
         for aptamer in lastGen:
             if hp.hairpin(aptamer[1]) != 0:
                 lastGen.remove(aptamer)
+        print("Finished gen " + str(gne))
     return [firstGen, lastGen] 
 
 
