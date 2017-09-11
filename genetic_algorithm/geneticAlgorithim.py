@@ -30,7 +30,7 @@ def runGeneticAlgorithim(aptamerData, generations):
         for aptamer in lastGen:
             if hp.hairpin(aptamer[1]) != 0:
                 lastGen.remove(aptamer)
-        print("Finished gen " + str(gne))
+        print("Finished gen " + str(gen))
     return [firstGen, lastGen] 
 
 
