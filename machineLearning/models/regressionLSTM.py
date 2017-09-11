@@ -64,14 +64,19 @@ predicted = model.predict(seqstest)
 model.save(str(sys.argv[4]))
 
 ##error
-#rmse = [np.sqrt(x) for x in ((predicted[:]-readstest[:])**2).mean(axis=0)]
-#print('rmse error is:')
-#print(rmse)
-
-
+error = [abs(predicted[i]-readstest[i])*100 for i in range(len(predicted))]
+print(error)
 #plotting
-plt.plot(predicted,'--')
-plt.plot(readstest,'--')
-plt.legend(["prediction", "Test"])
+fig = plt.figure()
+
+ax1 = fig.add_subplot(121)
+ax1.plot(predicted,'--')
+ax1.plot(readstest,'--')
+ax1.legend(["prediction", "Test"])
+
+ax2 = fig.add_subplot(122)
+ax2.plot(error, '--')
+ax2.legend(["predictions-results"])
+
 plt.show()
 plt.savefig(str(sys.argv[5]))
