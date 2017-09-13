@@ -1,3 +1,4 @@
+from __future__ import division
 import sys
 import numpy as np
 import pandas as pd
@@ -33,12 +34,13 @@ for i,seq in enumerate(seqs):
 
 
 #split into test and trian data
-(seqstrain, seqstest, readstrain, readstest) = train_test_split(seqs, reads, test_size=0.33, random_state=seed)
+(seqstrain, seqstest, readstrain, readstest) = train_test_split(seqs, reads, test_size=0.20, random_state=seed)
 
 predicted = mdl.predict(seqstest)
 
 error = [abs(predicted[i]-readstest[i])*100 for i in range(int(sys.argv[3]))]
-print(error)
+print("average error per prediction")
+print(sum(error)/int(sys.argv[3]))
 #plotting
 fig = plt.figure()
 
