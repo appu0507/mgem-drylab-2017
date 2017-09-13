@@ -1,3 +1,4 @@
+from __future__ import division
 import sys
 import numpy as np
 import pandas as pd
@@ -14,6 +15,7 @@ if len(sys.argv) < 6:
     print("arg3 is number of epochs")
     print("arg4 is the filepath where the model willbe saved to (*.h5)")
     print("arg5 is the filepath to the plot of the prediction results (*.png)")
+    print("arg6 is the number of datapts that will be graphed")
     
 # fix random seed for reproducibility
 seed = 9
@@ -43,18 +45,21 @@ for i,seq in enumerate(seqs):
 
 
 #split into test and trian data
-(seqstrain, seqstest, readstrain, readstest) = train_test_split(seqs, reads, test_size=0.33, random_state=seed)
-
+(seqstrain, seqstest, readstrain, readstest) = train_test_split(seqs, reads, test_size=0.04, random_state=seed)
+#TRAIN IT ON ALL THE DATA VALIDATE WITH OTHER DATA
 #creating model
 model = Sequential()
-model.add(LSTM(30, input_shape=(1, max_length), return_sequences=True))  
-model.add(LSTM(50, input_shape=(30,1), return_sequences=True))  
+model.add(LSTM(80, input_shape=(1, max_length), return_sequences=True))  
+model.add(LSTM(40, input_shape=(80,1), return_sequences=True))  
 model.add(Dropout(0.2))
-model.add(LSTM(20, input_shape=(50,1), return_sequences=False))  
+model.add(LSTM(20, input_shape=(40,1), return_sequences=True))  
 model.add(Dropout(0.2))
-model.add(Dense(output_dim=1, input_shape=(20,1))) 
-model.add(Activation("relu"))  
-model.compile(loss="mean_squared_error", optimizer="rmsprop")
+model.add(LSTM(10, input_shape=(20,1), return_sequences=False))  
+model.add(Dropout(0.2))
+model.add(Dense(units=1, input_shape=(10,1))) 
+
+model.add(Activation("sigmoid"))  
+model.compile(loss="mean_squared_error", optimizer="adam")
 
 # fit the model
 model.fit(seqstrain, readstrain, batch_size=int(sys.argv[2]), epochs=int(sys.argv[3]), validation_split=0.05)
@@ -64,18 +69,19 @@ predicted = model.predict(seqstest)
 model.save(str(sys.argv[4]))
 
 ##error
-error = [abs(predicted[i]-readstest[i])*100 for i in range(len(predicted))]
-print(error)
+error = [abs(predicted[i]-readstest[i])*100 for i in range(int(sys.argv[6]))]
+print("avg errror per prediction:")
+print(sum(error)/int(sys.argv[6]))
 #plotting
 fig = plt.figure()
 
 ax1 = fig.add_subplot(121)
-ax1.plot(predicted,'--')
-ax1.plot(readstest,'--')
-ax1.legend(["prediction", "Test"])
+ax1.plot(predicted[1:int(sys.argv[6])],'--')
+ax1.plot(readstest[1:int(sys.argv[6])],'--')
+ax1.legend(["predictions", "results"])
 
 ax2 = fig.add_subplot(122)
-ax2.plot(error, '--')
+ax2.plot(error[1:int(sys.argv[6])],'--')
 ax2.legend(["predictions-results"])
 
 plt.show()
