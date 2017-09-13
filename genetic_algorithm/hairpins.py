@@ -22,22 +22,20 @@ def inverted_repeat (input_sequence):
 
 #count the number of hairpins
 #returns: hairpin count 
-def hairpin(sequence, MINIMUM_HAIRPIN_LENGTH=5):
-     hairpin_num =0 #initialize hairpin count
-     
-     #strip 5', 3' and -
-     sequence = sequence.strip('5\'')  
-     sequence = sequence.strip('3\'')  
-     sequence = sequence.strip('-')
-     
+def hairpin(sequence, MINIMUM_HAIRPIN_LENGTH=7):
+#     hairpin_num =0 #initialize hairpin count
+#     sequence = sequence.strip('5\'')  
+#     sequence = sequence.strip('3\'')  
+#     sequence = sequence.strip('-')
      #counting hairpins  
      for x in range (MINIMUM_HAIRPIN_LENGTH, len(sequence)//2): 
           for counter in range (0,len(sequence)-x):
-               target = inverted_repeat(sequence[counter:counter+x])
-               if (sequence[counter+x:].find(target, counter+x)!= -1):
-                   print (target)
-                   hairpin_num = hairpin_num +1;
-     return hairpin_num
+               target=inverted_repeat(sequence[counter:counter+x])
+               if (sequence[counter+x:].find(target, counter+x)!=-1):
+#                   print (target)
+#                   hairpin_num = hairpin_num +1;
+                   return True 
+     return False
 
 
 
