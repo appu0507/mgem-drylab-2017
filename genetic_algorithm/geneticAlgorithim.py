@@ -8,7 +8,7 @@ from keras.models import load_model
 if len(sys.argv) < 6:
     print("how to use:")
     print("arg1 is the output file name")
-    print("arg2 is the file with he first generation of aptamers")
+    print("arg2 is the dereped fasta with 1st gen of aptamers")
     print("arg3 is the number of generations it runs for")
     print("arg4 is the cutoff % for top organisms for crossover")
     print("arg5 is the path to the ml model used to eval fitness scores")
@@ -28,7 +28,7 @@ def runGeneticAlgorithim(aptamerData, generations):
                 lastGen[x] = mt.mutate(lastGen[x], model)
             lastGen = ab.breed(lastGen, gen, model, float(sys.argv[4]))
         for aptamer in lastGen:
-            if hp.hairpin(aptamer[1]) != 0:
+            if hp.hairpin(aptamer[1]) == True:
                 lastGen.remove(aptamer)
         print("Finished gen " + str(gen))
     return [firstGen, lastGen] 
