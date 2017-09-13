@@ -21,16 +21,20 @@ def runGeneticAlgorithim(aptamerData, generations):
     for gen in range(generations):
         if gen == 0:
             lastGen = ab.breed(firstGen, gen, model, float(sys.argv[4]))
+            print("finished breeding")
             for x in range(len(lastGen)):
                 lastGen[x] = mt.mutate(lastGen[x], model)
+            print("finished mutating")
         else:
             for x in range(len(lastGen)):
                 lastGen[x] = mt.mutate(lastGen[x], model)
+            print("finished mutating")
             lastGen = ab.breed(lastGen, gen, model, float(sys.argv[4]))
+            print("finished breeding")
         for aptamer in lastGen:
             if hp.hairpin(aptamer[1]) == True:
                 lastGen.remove(aptamer)
-        print("Finished gen " + str(gen))
+        print("Finished gen " + str(gen+1))
     return [firstGen, lastGen] 
 
 
