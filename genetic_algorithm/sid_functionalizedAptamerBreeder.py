@@ -17,7 +17,12 @@ def getAptamers(readfile):
             try:
                 if '>' in sequences[i]:
                     size = (sequences[i].split('=')[1]).strip('\n;')
-                    aptamers.append([sequences[i].strip('\n;'),sequences[i+1].strip('\n;'),int(size)])
+                    seq = ''
+                    tmp = i+1
+                    while '>' not in sequences[tmp]:
+                        seq += sequences[tmp].strip('\n;')
+                        tmp += 1
+                    aptamers.append([sequences[i].strip('\n;'),seq,int(size)])
             except IndexError:
                 continue
     return aptamers
@@ -52,7 +57,7 @@ def getFitness(seqi, mdl):
     seqs = df.values
     seqs = [str(int(seq)) for seq in seqs[:,0]]
 
-    max_length = 286 #this was the max length from training 
+    max_length = 322 #this was the max length from training 286
 
     for i,seq in enumerate(seqs):
         diff = max_length - len(seq)
