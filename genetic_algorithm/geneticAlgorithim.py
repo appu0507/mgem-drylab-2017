@@ -5,6 +5,8 @@ import mutate as mt
 import sys
 from keras.models import load_model
 
+#NORMALIZE THE FITNESS SCORES AFTER EACH GENERATION
+
 if len(sys.argv) < 6:
     print("how to use:")
     print("arg1 is the output file name")
