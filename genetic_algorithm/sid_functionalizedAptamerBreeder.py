@@ -27,6 +27,7 @@ def getAptamers(readfile):
                 continue
     return aptamers
 
+
 #DEPRECIATED
 #generates a random aptamer for testing purposes 
 def generateAptamer(length=20): # function to generate a random aptamer length nucleotides long
@@ -57,7 +58,7 @@ def getFitness(seqi, mdl):
     seqs = df.values
     seqs = [str(int(seq)) for seq in seqs[:,0]]
 
-    max_length = 322 #this was the max length from training 286
+    max_length = 286 #this was the max length from training 286
 
     for i,seq in enumerate(seqs):
         diff = max_length - len(seq)
