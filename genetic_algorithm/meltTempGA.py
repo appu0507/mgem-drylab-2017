@@ -26,6 +26,7 @@ def runGeneticAlgorithim(aptamerData, generations):
     for x in range(len(lastGen)):
         lastGen[x] = mt.mutate(lastGen[x], model)
     print("finished mutating")
+    print("Finished gen 1")
     for gen in range(generations-1):
         for x in range(len(lastGen)):
             lastGen[x] = mt.mutate(lastGen[x], model)
@@ -35,7 +36,7 @@ def runGeneticAlgorithim(aptamerData, generations):
 #        for aptamer in lastGen:
 #            if hp.hairpin(aptamer[1]) == True:
 #                lastGen.remove(aptamer)
-    print("Finished gen " + str(gen+1))
+        print("Finished gen " + str(gen+2))
     return [firstGen, lastGen] 
 
 
