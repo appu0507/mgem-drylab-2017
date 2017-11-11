@@ -78,18 +78,50 @@ error = [abs(predicted[i]-tempstest[i])*100/tempstest[i] for i in range(numpts)]
 print("avg errror per prediction:")
 print(sum(error)/numpts)
 #plotting
-fig = plt.figure()
+import matplotlib.pyplot as plt
+import plotly.plotly as py
+import plotly.tools as tls
+#fig = plt.figure()
 
-if numpts > 150: #graphs are unreadable if it is too big
-    numpts = 150
 
-ax1 = fig.add_subplot(121)
-ax1.plot(predicted[1:numpts],'--')
-ax1.plot(tempstest[1:numpts],'--')
-ax1.legend(["predictions", "results"])
+if numpts > 20: #graphs are unreadable if it is too big
+    numpts = 20
 
-ax2 = fig.add_subplot(122)
-ax2.plot(error[1:numpts],'--')
-ax2.legend(["predictions-results"])
-plt.savefig(str(sys.argv[5]))
-plt.show()
+ind = range(numpts-1)
+width = 0.35
+predicts = predicted[1:numpts]
+actuvals = tempstest[1:numpts]
+
+mpl_fig = plt.figure()
+
+ax = mpl_fig.add_subplot(111)
+p1 = ax.bar(ind, predicts, width, color=(0.4,0.8,0.0))
+p2 = ax.bar(ind, actuvals, width, color=(0.376,0.376,0.376))
+ax.set_xlabel('Data Point')
+ax.set_ylabel('Fitness Score')
+ax.set_title('Comparing Predicted Fitness Scores to Actual Data')
+
+#ax2 = mpl_fig.add_subplot(222)
+#q1 = ax.bar(ind, error[1:numpts], width, color=(0.298,0.6,0.0))
+#ax2.set_xlabel('Data Point')
+#ax2.set_ylabel('Prediction Error')
+#ax2.set_title('Difference Between Predicted Scores and Actual Values')
+
+
+plotly_fig = tls.mpl_to_plotly(mpl_fig)
+plotly_fig["layout"]["showlegend"] = True
+plotly_fig["data"][0]["name"] = "Predicted Score"
+plotly_fig["data"][1]["name"] = "Actual Score"
+
+
+plot_url = py.plot(plotly_fig, filename=str(sys.argv[5]))
+#ax1 = fig.add_subplot(121)
+#ax1.plot(predicted[1:numpts],'--')
+#ax1.plot(tempstest[1:numpts],'--')
+#ax1.legend(["predictions", "results"])
+#
+#ax2 = fig.add_subplot(122)
+#ax2.plot(error[1:numpts],'--')
+#ax2.legend(["predictions-results"])
+#plt.savefig(str(sys.argv[5]))
+#plt.show()
