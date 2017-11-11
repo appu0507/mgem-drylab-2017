@@ -22,7 +22,7 @@ def inverted_repeat (input_sequence):
 
 #count the number of hairpins
 #returns: hairpin count 
-def hairpin(sequence, MINIMUM_HAIRPIN_LENGTH=7):
+def hairpin(sequence, MINIMUM_HAIRPIN_LENGTH=4):
 #     hairpin_num =0 #initialize hairpin count
 #     sequence = sequence.strip('5\'')  
 #     sequence = sequence.strip('3\'')  
