@@ -1,0 +1,51 @@
+This project was designed as a way to help the wetlab improve the efficiency of their DNAzyme.
+SELEX, an in vitro evolutionary selection process, was used to find high binding affinity sequences for a specific region in E. coli, where the DNAzyme acts to autoflouresce.
+The higher the binding affinity of the DNAzyme, the higher the rates of autofluoresence will be, meaning it serves better as a method of E. coli detection in hospitals.
+SELEX is an expensive, difficult, time-consuming process, with all of these increasing with each successive generation being run.
+The aim of this drylab project was to be able to simulate this SELEX optimization process in silico, using a genetic algorithim coupled with a neural network.
+A genetic algorithim is an optimization process inspired by natural selection.
+You start with a population of solutions (DNAzyme sequences) to your problem (finding high-binding affinity DNAzyme sequences). 
+These solutions normally require some sort of encoding as a string, but as the solutions are DNA sequences, this is already done for us.
+Next the top x% (usually 10) are taken from this solution population and breed together to get an entirely new population of solutions.
+The breeding involves crossover, mutation and in our case, filtering.
+
+Breeding is when two members of the 10% subset are picked and the first part of one member is randomly combined with the second part of another member.
+If AAAAA and TTTTTT are breed, then a random number between 1 and 5 (length of the shorter sequence) is chosen and the sequences are crossedover at that point.
+If 3 were chosen as the random crossover point then the corresponding child sequenecs would be AAATTT.
+
+Mutation is where, for each base, there is a 2% chance (can be varied) where that base will randomly switch to another base.
+If AAATTT were to be mutated, then a possible outcome is AAGTTT.
+
+Finally, the filtering step involves checking whether a sequence contains a hairpin (pallendromic sequence that can bind to itself) are removing it from the population if it does.
+Hairpins can interfer with binding, as they cause a sequence to bind to itself, so they are removed during each generation.
+
+Running this GA, with a simple fitness function (% of bases that are A's), showed significant fitness improvements, even over a short number of generations (< 10).
+
+In order to find the population members with the hiest fitness after the first generation, there must besome way to predict th fitness (binding affinity) of a sequence.
+This is where the neural network comes in.
+We built a LSTM network and trained it on SELEX data from the wetlab to build a model than can predict the fitness of a DNA sequence.
+This way multiple generations can be run and the top scoring individuals can be selected for breeding.
+
+Due to the nature of long sequence data (the initial solution population had an average length of 290-300 bases), building an acurate model is very difficult.
+Even using nueral nets to do regression on sequence data is already challenging.
+We were able to build a funtional LSTM, although it was not able to accurately predict binding affinity to be useful. The model was trained under multiple paramater sets, with different training data, but ultimately due to the nature of the problem and the quality/amount of the training data we were ultimately unable to produce a fully functional model for predicting binding affinity.
+
+Despite this we were able to prove the validity of the GA + NN strategy for generating higher quality solutions.
+We generated a data set of short 15-30bp sequences, where fitness was calculated as abs(65-melting temperature)/65. 
+Sixty-five degrees is often thought of as an ideal melting temperature for primers during PCR. As this is a very simpel metric, that can easily be calculated for any sequence, we used this fitness measurment as a way to test the validity of this strategy at all.
+First a data set of 50000 random sequences was generated, along with thier fitness values. 
+Next our LSTM model was trained on this data, making it able to predict melting temperature of a sequence with less than a 2% error on average.
+Here error was defined as abs(predicted fitness - actual fitness)*100/actual fitness, fitness being defined for melting temperature above.
+As the starting fitness of the initial population was rather high (80%), a 3000 sample subset was taken (avg fitness ~54%).
+The LSTM was integrated into the GA and allowed to run for between 1-90 generations. 
+After even 10 generations  the solution populations were becoming fixed at 1-2 unique solutions (out of ~1700-2100 total solutions).
+But for any number of generations there was a fitness increase of either 5% for 1 generation and 20-35% increase past 10 generations.
+Varying the input data set would likely result in more variation at higher generation numbers.
+Taking solutions from every generation, there were 71 unique solutions, starting from a set of 3000 initial members in the solution population.
+
+The error in predictions, while higher than when testing the LSTM on the validation level, was lower than the actual aptamer prediction error.
+Ultimately, this model provides a proof of concept that integrating a gentic algorithim and machine learning model can be used to optimize sequences in silico.
+The most challenging problem ahead is finding ways to increase the accuracy of the ML model, either by optimizing the model parameters (batch size, epochs, architecture etc.), finding way to better extract data sets, using different techniques (random forest) or any combination.
+A genetic algorithim is an excellent optimization tool, but it can only work insofar as it has an accurate fitness estimation function, provided in our case, by a neural network.
+The next steps for research like this are to experiment with other machine learning techniques, as well as design SELEX experiemnts to obtain data specificaly tailored to being good training sets (high variety, high volume). 
+Also, extracting more out of our own data, to try and expand the feature set (adding values for GC%, length, or other feature than can be extracted from a sequences) can help increase the models accuracy, or at least have it indicate further heuristics to guide fitness estimation. 
